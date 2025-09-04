@@ -1,9 +1,12 @@
 {
   "name": "@activebook/tts-mcp-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MCP server for Google TTS functionality",
   "type": "module",
   "main": "dist/index.js",
+  "bin": {
+    "tts-mcp-server": "dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
