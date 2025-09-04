@@ -37,12 +37,12 @@ async function generateSpeech(text: string, voice: string, directory: string, st
     const speechStyleTemplates = getVoiceStyleTemplates() || {};
 
     // Determine the speech style to use
-    let speechStyle = "";
+    let stylePrompt = "";
     if (style) {
         if (speechStyleTemplates[style]) {
-            speechStyle = speechStyleTemplates[style].style;
+            stylePrompt = speechStyleTemplates[style].prompt;
         } else {
-            speechStyle = style; // Use custom style text directly
+            stylePrompt = style; // Use custom style text directly
         }
     }
 
@@ -72,7 +72,7 @@ async function generateSpeech(text: string, voice: string, directory: string, st
     const outputPath = path.join(directory, filename);
 
     // Prepare the text with speech style
-    const styledText = speechStyle ? `${speechStyle}: ${text}` : text;
+    const styledText = stylePrompt ? `${stylePrompt}: ${text}` : text;
 
     const response: any = await ai.models.generateContent({
         model: ttsEngine,

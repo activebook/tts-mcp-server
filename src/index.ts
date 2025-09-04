@@ -29,7 +29,7 @@ const settings = {
 // Tool: google_tts_generate
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "google_tts_generate") {
-    const { content, directory: directory = process.cwd(), voice = settings.voiceChoice, style } = request.params.arguments as {
+    const { content, directory: directory = process.cwd(), voice = settings.voiceChoice, style = "news_anchor" } = request.params.arguments as {
       content: string;
       directory?: string;   // Optional property
       voice?: string;  // Optional property
@@ -81,7 +81,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         // Only show style names and descriptions, not styles
         for (const key in templates) {
           if (templates[key] && typeof templates[key] === 'object') {
-            delete templates[key].style;
+            delete templates[key].prompt;
           }
         }
       }
@@ -116,7 +116,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             content: { type: "string", description: "The text content to convert to speech" },
             directory: { type: "string", description: "Directory to save the audio file (Default: current directory)" },
             voice: { type: "string", description: "Voice to use for TTS (Default: Kore)" },
-            style: { type: "string", description: "Voice style - either a style name (e.g., 'news_tone') or custom style text" },
+            style: { type: "string", description: "Voice style - either a style name (e.g., 'news_anchor') or custom style text" },
           },
           required: ["content"],
         },

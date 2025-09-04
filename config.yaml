@@ -95,33 +95,52 @@ google_tts:
 
 # Speech style templates
 speech_styles:
-  news_tone:
-    description: "Formal, clear, and objective news-reporting style"
-    style: "Generate this audio in a formal, clear, and objective news-reporting style"
-  fast_rapper:
-    description: "Rhythmic rap style with increased speed"
-    style: "Generate this audio in a fast-paced, rhythmic rap style with speed increased to 1.5x"
-  humorous:
-    description: "Comedic, light-hearted tone with exaggerated expressions"
-    style: "Generate this audio in a comedic, light-hearted tone with exaggerated expressions"
-  storyteller:
-    description: "Warm, engaging storytelling voice like a bedtime story"
-    style: "Generate this audio in a warm, engaging storytelling voice like a bedtime story"
-  motivational:
-    description: "Energetic, inspiring motivational speaker style"
-    style: "Generate this audio in an energetic, inspiring motivational speaker style"
-  calm_meditation:
-    description: "Soothing, calm meditation guide voice"
-    style: "Generate this audio in a soothing, calm meditation guide voice"
-  excited_announcer:
-    description: "Enthusiastic, high-energy announcer style"
-    style: "Generate this audio in an enthusiastic, high-energy announcer style"
+  news_anchor:
+    description: "A formal, clear, and objective news-reporting style. Characterized by precise articulation and a steady pace."
+    prompt: "Generate this audio in a formal, clear, and objective news-reporting style with a neutral pitch and steady rate."
+  professional_presenter:
+    description: "A clear, confident, and engaging style for business presentations or academic lectures."
+    prompt: "Generate this audio in a clear and professional business presentation style with a medium pitch and varied rate for emphasis."
+  documentary_narrator:
+    description: "A calm, authoritative, and informative voice, perfect for narrating factual content."
+    prompt: "Generate this audio in a calm, authoritative, and informative documentary narrator style with a slightly low pitch and slow rate."
+  corporate_trainer:
+    description: "An upbeat, clear, and encouraging tone designed to be motivational and easy to follow."
+    prompt: "Generate this audio in an upbeat, clear, and encouraging corporate trainer style with a medium-high pitch and moderate rate."
+  epic_storyteller:
+    description: "A warm, deep, and engaging storytelling voice, like a movie trailer or epic saga narrator."
+    prompt: "Generate this audio in a warm, engaging, and deep storytelling voice with a low pitch and dramatic pauses."
+  bedtime_storyteller:
+    description: "A gentle, soothing, and warm voice, perfect for lulling a child to sleep."
+    prompt: "Generate this audio in a gentle, soothing, and warm bedtime storyteller voice with a soft volume, low pitch, and very slow rate."
   mysterious_narrator:
-    description: "Deep, mysterious, suspenseful narrator voice"
-    style: "Generate this audio in a deep, mysterious, suspenseful narrator voice"
+    description: "A deep, suspenseful, and hushed voice that builds intrigue and tension."
+    prompt: "Generate this audio in a deep, mysterious, and suspenseful narrator voice with a low pitch, slow rate, and soft volume."
+  fast_rapper:
+    description: "A rhythmic, fast-paced rap style with clear enunciation and a confident flow."
+    prompt: "Generate this audio in a fast-paced, rhythmic rap style with a high rate (1.5x) and energetic intonation."
+  excited_announcer:
+    description: "An enthusiastic, high-energy announcer style, often heard at sporting events or on game shows."
+    prompt: "Generate this audio in an enthusiastic, high-energy announcer style with a loud volume, high pitch, and fast rate."
   friendly_chat:
-    description: "Casual, friendly conversational tone"
-    style: "Generate this audio in a casual, friendly conversational tone"
-  professional:
-    description: "Clear, professional business presentation style"
-    style: "Generate this audio in a clear, professional business presentation style"
+    description: "A casual, relaxed, and warm conversational tone, as if speaking to a good friend."
+    prompt: "Generate this audio in a casual, friendly conversational tone with a natural pitch and varied, conversational rate."
+  empathetic_friend:
+    description: "A soft, caring, and understanding voice that conveys warmth and empathy."
+    prompt: "Generate this audio in a soft, empathetic, and understanding tone with a low pitch, slow rate, and gentle intonation."
+  podcast_host:
+    description: "An engaging, clear, and articulate conversational style, designed to hold a listener's attention."
+    prompt: "Generate this audio in an engaging and articulate podcast host style with a medium rate and expressive intonation."
+  humorous_comedian:
+    description: "A comedic, light-hearted tone with exaggerated expressions, varied pitch, and playful timing."
+    prompt: "Generate this audio in a comedic, light-hearted tone with exaggerated expressions, a highly varied pitch, and dynamic rate."
+  motivational_speaker:
+    description: "An energetic, passionate, and inspiring style with a powerful and rising intonation."
+    prompt: "Generate this audio in an energetic, inspiring motivational speaker style with a loud volume, high pitch, and powerful delivery."
+  calm_meditation_guide:
+    description: "A soothing, serene, and gentle voice with a very slow pace and soft volume."
+    prompt: "Generate this audio in a soothing, calm meditation guide voice with a soft volume, low pitch, and a very slow, breathy rate."
+  dramatic_performer:
+    description: "An expressive, theatrical voice capable of conveying a wide range of intense emotions."
+    prompt: "Generate this audio in an expressive, theatrical style with a wide pitch range, dynamic volume, and emotionally driven pacing."
+# End Speech style templates
