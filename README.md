@@ -45,7 +45,7 @@ Add the following to your MCP configuration file (e.g., `mcp.json`):
         "@activebook/tts-mcp-server"
       ],
       "env": {
-        "GOOGLE_API_KEY": "${input:brave-api-key}",
+        "GOOGLE_API_KEY": "{your-google-api-key}", // required, change to your own key
         "GOOGLE_NAME_MODEL": "gemini-2.0-flash", // optional
         "GOOGLE_TTS_MODEL": "gemini-2.5-flash-preview-tts", // optional
         "GOOGLE_VOICE": "kore" // optional
