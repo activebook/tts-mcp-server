@@ -28,11 +28,23 @@ async function saveWaveFile(
   });
 }
 
-async function generateSpeech(text: string, voice: string, directory: string, settings: any = {}): Promise<string> {
+async function generateSpeech(text: string, voice: string, directory: string, style?: string, settings: any = {}): Promise<string> {
     const apiKey = settings.apiKey;
     const nameModel = settings.nameModel;
     const ttsEngine = settings.ttsEngine;
-    const speechStyle = settings.speechStyle;
+
+    // Read speech style templates from config
+    const speechStyleTemplates = getVoiceStyleTemplates() || {};
+
+    // Determine the speech style to use
+    let speechStyle = "";
+    if (style) {
+        if (speechStyleTemplates[style]) {
+            speechStyle = speechStyleTemplates[style].style;
+        } else {
+            speechStyle = style; // Use custom style text directly
+        }
+    }
 
     if (!apiKey) {
         throw new Error('Google AI API key not configured. Please set your API key in settings.');
@@ -129,4 +141,18 @@ async function getVoices(): Promise<Array<{name: string, description: string}>> 
   }
 }
 
-export { generateSpeech, getVoices };
+// Helper function to get speech style templates from config
+function getVoiceStyleTemplates() {
+  try {
+    const projectRoot = path.resolve(__dirname, '..');
+    const configPath = path.join(projectRoot, 'config.yaml');
+    const configContent = fs.readFileSync(configPath, 'utf8');
+    const config = yaml.load(configContent) as any;
+    return config?.speech_styles || {};
+  } catch (error) {
+    console.error('Error reading speech style templates from config:', error);
+    return {};
+  }
+}
+
+export { generateSpeech, getVoices, getVoiceStyleTemplates };

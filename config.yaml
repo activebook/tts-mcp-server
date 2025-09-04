@@ -1,5 +1,5 @@
 # Google TTS Configuration
-google_tts:  
+google_tts:
   name_prompt: "Provide only a concise filename (5 - 10 words) for the content below — no extra text: "
   # All available voices with descriptions
   voices:
@@ -92,3 +92,36 @@ google_tts:
 
     - name: "Sulafat"
       description: "Warm"
+
+# Speech style templates
+speech_styles:
+  news_tone:
+    description: "Formal, clear, and objective news-reporting style"
+    style: "Generate this audio in a formal, clear, and objective news-reporting style"
+  fast_rapper:
+    description: "Rhythmic rap style with increased speed"
+    style: "Generate this audio in a fast-paced, rhythmic rap style with speed increased to 1.5x"
+  humorous:
+    description: "Comedic, light-hearted tone with exaggerated expressions"
+    style: "Generate this audio in a comedic, light-hearted tone with exaggerated expressions"
+  storyteller:
+    description: "Warm, engaging storytelling voice like a bedtime story"
+    style: "Generate this audio in a warm, engaging storytelling voice like a bedtime story"
+  motivational:
+    description: "Energetic, inspiring motivational speaker style"
+    style: "Generate this audio in an energetic, inspiring motivational speaker style"
+  calm_meditation:
+    description: "Soothing, calm meditation guide voice"
+    style: "Generate this audio in a soothing, calm meditation guide voice"
+  excited_announcer:
+    description: "Enthusiastic, high-energy announcer style"
+    style: "Generate this audio in an enthusiastic, high-energy announcer style"
+  mysterious_narrator:
+    description: "Deep, mysterious, suspenseful narrator voice"
+    style: "Generate this audio in a deep, mysterious, suspenseful narrator voice"
+  friendly_chat:
+    description: "Casual, friendly conversational tone"
+    style: "Generate this audio in a casual, friendly conversational tone"
+  professional:
+    description: "Clear, professional business presentation style"
+    style: "Generate this audio in a clear, professional business presentation style"

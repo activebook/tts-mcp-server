@@ -3,7 +3,7 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { generateSpeech, getVoices } from "./service.js";
+import { generateSpeech, getVoices, getVoiceStyleTemplates } from "./service.js";
 import { getAndSetProxyEnvironment } from "./sys_proxy.js";
 
 const server = new Server(
@@ -24,20 +24,20 @@ const settings = {
   nameModel: process.env.GOOGLE_NAME_MODEL || 'gemini-2.0-flash',
   ttsEngine: process.env.GOOGLE_TTS_MODEL || 'gemini-2.5-flash-preview-tts',
   voiceChoice: process.env.GOOGLE_VOICE || 'Kore',
-  speechStyle: 'Generate this audio in a formal, clear, and objective news-reporting style',
 };
 
 // Tool: google_tts_generate
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "google_tts_generate") {
-    const { content, directory: directory = process.cwd(), voice = settings.voiceChoice } = request.params.arguments as {
+    const { content, directory: directory = process.cwd(), voice = settings.voiceChoice, style } = request.params.arguments as {
       content: string;
       directory?: string;   // Optional property
       voice?: string;  // Optional property
+      style?: string;  // Optional property
     };
 
     try {
-      const savedPath = await generateSpeech(content, voice, directory, settings);
+      const savedPath = await generateSpeech(content, voice, directory, style, settings);
       return {
         content: [{ type: "text", text: savedPath }],
       };
@@ -71,6 +71,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
   }
 
+  if (request.params.name === "get_voice_styles") {
+    try {
+      const { detail } = request.params.arguments as {
+        detail?: boolean;
+      };
+      const templates = getVoiceStyleTemplates();
+      if (!detail) {
+        // Only show style names and descriptions, not styles
+        for (const key in templates) {
+          if (templates[key] && typeof templates[key] === 'object') {
+            delete templates[key].style;
+          }
+        }
+      }
+      return {
+        content: [{ type: "text", text: JSON.stringify(templates) }],
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return {
+        content: [{ type: "text", text: `Error: ${errorMessage}` }],
+        isError: true,
+      };
+    }
+  }
+
   return {
     content: [{ type: "text", text: "Tool not found" }],
     isError: true,
@@ -90,6 +116,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             content: { type: "string", description: "The text content to convert to speech" },
             directory: { type: "string", description: "Directory to save the audio file (Default: current directory)" },
             voice: { type: "string", description: "Voice to use for TTS (Default: Kore)" },
+            style: { type: "string", description: "Voice style - either a style name (e.g., 'news_tone') or custom style text" },
           },
           required: ["content"],
         },
@@ -101,6 +128,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           type: "object",
           properties: {
             count: { type: "number", description: "Number of voices to return (0 for all)" },
+          },
+          required: [],
+        },
+      },
+      {
+        name: "get_voice_styles",
+        description: "Get list of available voice styles",
+        inputSchema: {
+          type: "object",
+          properties: {
+            detail: { type: "boolean", description: "Whether to show voice style detail (Default: false)" },
           },
           required: [],
         },
