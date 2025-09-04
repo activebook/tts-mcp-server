@@ -2,7 +2,7 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ListResourceTemplatesRequestSchema, ReadResourceRequestSchema, McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { generateSpeech, getVoices, getVoiceStyleTemplates } from "./service.js";
 import { getAndSetProxyEnvironment } from "./sys_proxy.js";
 
@@ -14,6 +14,7 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      resources: {},
     },
   }
 );
@@ -25,6 +26,51 @@ const settings = {
   ttsEngine: process.env.GOOGLE_TTS_MODEL || 'gemini-2.5-flash-preview-tts',
   voiceChoice: process.env.GOOGLE_VOICE || 'Kore',
 };
+
+// Resource templates
+server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
+  return {
+    resourceTemplates: [
+      {
+        uriTemplate: 'tts://voice-styles/{style_name}',
+        name: 'Voice style template',
+        description: 'Access individual voice style templates by name',
+        mimeType: 'application/json',
+      },
+    ],
+  };
+});
+
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const uri = request.params.uri;
+  const match = uri.match(/^tts:\/\/voice-styles\/(.+)$/);
+  if (!match) {
+    throw new McpError(
+      ErrorCode.InvalidRequest,
+      `Invalid URI format: ${uri}`
+    );
+  }
+
+  const styleName = decodeURIComponent(match[1]);
+  const templates = getVoiceStyleTemplates();
+
+  if (!templates[styleName]) {
+    throw new McpError(
+      ErrorCode.InvalidRequest,
+      `Voice style '${styleName}' not found`
+    );
+  }
+
+  return {
+    contents: [
+      {
+        uri: uri,
+        mimeType: 'application/json',
+        text: JSON.stringify(templates[styleName], null, 2),
+      },
+    ],
+  };
+});
 
 // Tool: google_tts_generate
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
