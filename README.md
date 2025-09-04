@@ -4,9 +4,9 @@ A Model Context Protocol (MCP) server that provides Text-to-Speech (TTS) functio
 
 ## Features
 
-- **google_tts_generate**: Generate audio from text content using specified voice and speech style
-- **get_google_tts_voices**: Retrieve list of available TTS voices with descriptions from config.yaml
-- **get_voice_styles**: Get list of predefined speech style templates for different tones
+- **Tools**: Generate TTS audio, list voices, get style templates
+- **Resources**: Access voice style templates via URI patterns
+- **Prompts**: Direct access to 16+ voice style prompt templates
 
 ## Installation
 
@@ -86,6 +86,56 @@ Description: Get list of predefined speech style templates
 **Parameters:**
 
 - detail: boolean (Whether to show voice style detail (Default: false)) [optional]
-
 **Returns:** JSON object containing available speech style templates with descriptions and style prompts
+
+## Prompts
+
+Access voice style prompt templates directly:
+
+### Available Prompts
+- `news_anchor` - Formal, clear news-reporting style
+- `professional_presenter` - Confident business presentation style
+- `bedtime_storyteller` - Gentle, soothing storytelling voice
+- `motivational_speaker` - Energetic, inspiring delivery
+- `podcast_host` - Engaging conversational style
+- `documentary_narrator` - Calm, authoritative narration
+- `mysterious_narrator` - Deep, suspenseful voice
+- `humorous_comedian` - Light-hearted, comedic tone
+- `calm_meditation_guide` - Soothing meditation voice
+- `dramatic_performer` - Expressive theatrical style
+- And 6 more styles...
+
+### Usage
+```json
+{
+  "method": "prompts/get",
+  "params": {
+    "name": "news_anchor"
+  }
+}
+```
+
+**Returns:** Style prompt text ready for TTS generation
+
+## Resources
+
+Access voice style metadata via URI patterns:
+
+### Voice Style Templates
+- **URI Pattern:** `tts://voice-styles/{style_name}`
+- **Example:** `tts://voice-styles/news_anchor`
+- **Content:** JSON with style description and prompt
+
+### Usage
+```json
+{
+  "method": "resources/read",
+  "params": {
+    "uri": "tts://voice-styles/bedtime_storyteller"
+  }
+}
+```
+
+**Returns:** Voice style metadata in JSON format
+
 
