@@ -1,0 +1,35 @@
+{
+  "name": "@activebook/tts-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Google TTS functionality",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "tts-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "tts",
+    "google"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^1.17.0",
+    "@modelcontextprotocol/sdk": "^1.11.4",
+    "js-yaml": "^4.1.0",
+    "undici": "^7.4.0",
+    "wav": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^20.0.0",
+    "@types/wav": "^1.0.4",
+    "typescript": "^5.0.0"
+  }
+}
