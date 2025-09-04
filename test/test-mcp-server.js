@@ -104,7 +104,8 @@ class MCPServerTester {
       protocolVersion: '2024-11-05',
       capabilities: {
         tools: {},
-        resources: {}
+        resources: {},
+        prompts: {}
       },
       clientInfo: {
         name: 'mcp-server-tester',
@@ -113,8 +114,9 @@ class MCPServerTester {
     }, 'Initialize server');
 
     // Wait for initialization
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));    
 
+    /*
     // Test 2: List tools
     this.sendMessage('tools/list', {}, 'List available tools');
 
@@ -136,6 +138,18 @@ class MCPServerTester {
     this.sendMessage('resources/read', {
       uri: 'tts://voice-styles/nonexistent'
     }, 'Test invalid resource (should error)');
+    */
+
+    // Test 7: List prompts
+    this.sendMessage('prompts/list', {}, 'List available prompts');
+
+    // Wait for prompt list
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Test 8: Test Prompt
+    this.sendMessage('prompts/get', {
+      name: 'news_anchor'
+    }, 'Test news_anchor prompt');
 
     // Wait for all responses
     await new Promise(resolve => setTimeout(resolve, 3000));

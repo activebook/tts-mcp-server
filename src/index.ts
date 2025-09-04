@@ -16,6 +16,7 @@ const server = new McpServer(
     capabilities: {
       tools: {},
       resources: {},
+      prompts: {},
     },
   }
 );
@@ -122,8 +123,38 @@ server.tool("get_voice_styles", "Get list of available voice styles", {
   }
 });
 
+// Register voice style prompts
+function registerVoiceStylePrompts() {
+  const templates = getVoiceStyleTemplates();
+
+  for (const [styleName, styleData] of Object.entries(templates)) {
+    if (styleData && typeof styleData === 'object' && 'prompt' in styleData && 'description' in styleData) {
+      const style = styleData as { prompt: string; description: string };
+
+      server.prompt(styleName, style.description, async () => {
+        return {
+          description: `${styleName}: ${style.description}`,
+          messages: [
+            {
+              role: "user",
+              content: {
+                type: "text",
+                text: style.prompt,
+              },
+            },
+          ],
+        };
+      });
+    }
+  }
+}
+
 async function main() {
+  // Set proxy environment
   getAndSetProxyEnvironment();
+  // Register all voice style prompts
+  registerVoiceStylePrompts();
+  // Start the server
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("TTS MCP Server running on stdio");
