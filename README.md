@@ -135,7 +135,16 @@ Access voice style metadata via URI patterns:
   }
 }
 ```
-
 **Returns:** Voice style metadata in JSON format
+
+## Screenshots
+
+| Feature | Screenshot |
+|---------|------------|
+| **Available Tools** | ![List Tools](screenshots/list_tools.png) |
+| **Generate Audio** | ![Generate Audio](screenshots/generate_audio.png) |
+| **List Voices** | ![List Voices](screenshots/list_voices.png) |
+| **Voice Styles** | ![Voice Styles](screenshots/list_voice_styles.png) |
+
 
 
