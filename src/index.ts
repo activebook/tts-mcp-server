@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ListResourceTemplatesRequestSchema, ReadResourceRequestSchema, McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
+import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
 import { generateSpeech, getVoices, getVoiceStyleTemplates } from "./service.js";
 import { getAndSetProxyEnvironment } from "./sys_proxy.js";
 
-const server = new Server(
+const server = new McpServer(
   {
     name: "tts-mcp-server",
-    version: "1.0.5",
+    version: "1.1.0",
   },
   {
     capabilities: {
@@ -27,31 +28,10 @@ const settings = {
   voiceChoice: process.env.GOOGLE_VOICE || 'Kore',
 };
 
+
 // Resource templates
-server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
-  return {
-    resourceTemplates: [
-      {
-        uriTemplate: 'tts://voice-styles/{style_name}',
-        name: 'Voice style template',
-        description: 'Access individual voice style templates by name',
-        mimeType: 'application/json',
-      },
-    ],
-  };
-});
-
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-  const uri = request.params.uri;
-  const match = uri.match(/^tts:\/\/voice-styles\/(.+)$/);
-  if (!match) {
-    throw new McpError(
-      ErrorCode.InvalidRequest,
-      `Invalid URI format: ${uri}`
-    );
-  }
-
-  const styleName = decodeURIComponent(match[1]);
+server.resource("Voice style template", new ResourceTemplate('tts://voice-styles/{style_name}', { list: undefined }), async (uri, variables) => {
+  const styleName = variables.style_name[0];
   const templates = getVoiceStyleTemplates();
 
   if (!templates[styleName]) {
@@ -64,7 +44,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   return {
     contents: [
       {
-        uri: uri,
+        uri: uri.toString(),
         mimeType: 'application/json',
         text: JSON.stringify(templates[styleName], null, 2),
       },
@@ -72,125 +52,74 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   };
 });
 
-// Tool: google_tts_generate
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "google_tts_generate") {
-    const { content, directory: directory = process.cwd(), voice = settings.voiceChoice, style = "news_anchor" } = request.params.arguments as {
-      content: string;
-      directory?: string;   // Optional property
-      voice?: string;  // Optional property
-      style?: string;  // Optional property
+
+
+// Tools
+server.tool("google_tts_generate", "Generate TTS audio from text content", {
+  content: z.string().describe("The text content to convert to speech"),
+  directory: z.string().optional().describe("Directory to save the audio file (Default: current directory)"),
+  voice: z.string().optional().describe("Voice to use for TTS (Default: Kore)"),
+  style: z.string().optional().describe("Voice style - either a style name (e.g., 'news_anchor') or custom style text"),
+}, async (args) => {
+  const { content, directory = process.cwd(), voice = settings.voiceChoice, style = "news_anchor" } = args;
+  try {
+    const savedPath = await generateSpeech(content, voice, directory, style, settings);
+    return {
+      content: [{ type: "text", text: savedPath }],
     };
-
-    try {
-      const savedPath = await generateSpeech(content, voice, directory, style, settings);
-      return {
-        content: [{ type: "text", text: savedPath }],
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      return {
-        content: [{ type: "text", text: `Error: ${errorMessage}` }],
-        isError: true,
-      };
-    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
   }
-
-  if (request.params.name === "get_google_tts_voices") {
-    try {
-      const { count } = request.params.arguments as {
-        count?: number;
-      };
-      let voices = await getVoices();
-      if (count !== undefined && count > 0) {
-        voices = voices.slice(0, count);
-      }
-      return {
-        content: [{ type: "text", text: JSON.stringify(voices) }],
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      return {
-        content: [{ type: "text", text: `Error: ${errorMessage}` }],
-        isError: true,
-      };
-    }
-  }
-
-  if (request.params.name === "get_voice_styles") {
-    try {
-      const { detail } = request.params.arguments as {
-        detail?: boolean;
-      };
-      const templates = getVoiceStyleTemplates();
-      if (!detail) {
-        // Only show style names and descriptions, not styles
-        for (const key in templates) {
-          if (templates[key] && typeof templates[key] === 'object') {
-            delete templates[key].prompt;
-          }
-        }
-      }
-      return {
-        content: [{ type: "text", text: JSON.stringify(templates) }],
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      return {
-        content: [{ type: "text", text: `Error: ${errorMessage}` }],
-        isError: true,
-      };
-    }
-  }
-
-  return {
-    content: [{ type: "text", text: "Tool not found" }],
-    isError: true,
-  };
 });
 
-// Tool listing
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [
-      {
-        name: "google_tts_generate",
-        description: "Generate TTS audio from text content",
-        inputSchema: {
-          type: "object",
-          properties: {
-            content: { type: "string", description: "The text content to convert to speech" },
-            directory: { type: "string", description: "Directory to save the audio file (Default: current directory)" },
-            voice: { type: "string", description: "Voice to use for TTS (Default: Kore)" },
-            style: { type: "string", description: "Voice style - either a style name (e.g., 'news_anchor') or custom style text" },
-          },
-          required: ["content"],
-        },
-      },
-      {
-        name: "get_google_tts_voices",
-        description: "Get list of available TTS voices",
-        inputSchema: {
-          type: "object",
-          properties: {
-            count: { type: "number", description: "Number of voices to return (0 for all)" },
-          },
-          required: [],
-        },
-      },
-      {
-        name: "get_voice_styles",
-        description: "Get list of available voice styles",
-        inputSchema: {
-          type: "object",
-          properties: {
-            detail: { type: "boolean", description: "Whether to show voice style detail (Default: false)" },
-          },
-          required: [],
-        },
-      },
-    ],
-  };
+server.tool("get_google_tts_voices", "Get list of available TTS voices", {
+  count: z.number().optional().describe("Number of voices to return (0 for all)"),
+}, async (args) => {
+  const { count } = args;
+  try {
+    let voices = await getVoices();
+    if (count !== undefined && count > 0) {
+      voices = voices.slice(0, count);
+    }
+    return {
+      content: [{ type: "text", text: JSON.stringify(voices) }],
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+});
+
+server.tool("get_voice_styles", "Get list of available voice styles", {
+  detail: z.boolean().optional().describe("Whether to show voice style detail (Default: false)"),
+}, async (args) => {
+  const { detail = false } = args;
+  try {
+    const templates = getVoiceStyleTemplates();
+    if (!detail) {
+      for (const key in templates) {
+        if (templates[key] && typeof templates[key] === 'object') {
+          delete templates[key].prompt;
+        }
+      }
+    }
+    return {
+      content: [{ type: "text", text: JSON.stringify(templates) }],
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
 });
 
 async function main() {
