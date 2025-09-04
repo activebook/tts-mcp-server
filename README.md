@@ -6,7 +6,7 @@ A Model Context Protocol (MCP) server that provides Text-to-Speech (TTS) functio
 
 - **google_tts_generate**: Generate audio from text content using specified voice and speech style
 - **get_google_tts_voices**: Retrieve list of available TTS voices with descriptions from config.yaml
-- **get_speech_style_templates**: Get list of predefined speech style templates for different tones
+- **get_voice_styles**: Get list of predefined speech style templates for different tones
 
 ## Installation
 
@@ -79,22 +79,13 @@ Description: Get list of available TTS voices
 
 - count: number (Number of voices to return (0 for all)) [optional]
 
-### get_speech_style_templates
+### get_voice_styles
 
 Description: Get list of predefined speech style templates
 
-**Parameters:** None
+**Parameters:**
 
-**Returns:** JSON object containing available speech style templates with names, descriptions, and style prompts
+- detail: boolean (Whether to show voice style detail (Default: false)) [optional]
 
-**Available Templates:**
-- `news_tone`: Formal, clear, and objective news-reporting style
-- `fast_rapper`: Rhythmic rap style with increased speed
-- `humorous`: Comedic, light-hearted tone with exaggerated expressions
-- `storyteller`: Warm, engaging storytelling voice like a bedtime story
-- `motivational`: Energetic, inspiring motivational speaker style
-- `calm_meditation`: Soothing, calm meditation guide voice
-- `excited_announcer`: Enthusiastic, high-energy announcer style
-- `mysterious_narrator`: Deep, mysterious, suspenseful narrator voice
-- `friendly_chat`: Casual, friendly conversational tone
-- `professional`: Clear, professional business presentation style
+**Returns:** JSON object containing available speech style templates with descriptions and style prompts
+
