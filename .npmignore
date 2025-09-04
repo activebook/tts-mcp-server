@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Screenshots
+screenshots/
+
+# Tests
+test/
+
 # Logs
 *.log
 npm-debug.log*
