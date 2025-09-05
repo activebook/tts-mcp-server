@@ -10,7 +10,7 @@ import { getAndSetProxyEnvironment } from "./sys_proxy.js";
 const server = new McpServer(
   {
     name: "tts-mcp-server",
-    version: "1.1.1",
+    version: "1.1.2",
   },
   {
     capabilities: {
