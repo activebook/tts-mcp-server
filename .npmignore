@@ -7,6 +7,9 @@ screenshots/
 # Tests
 test/
 
+# CI artifacts
+.github/
+
 # Logs
 *.log
 npm-debug.log*
