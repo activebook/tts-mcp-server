@@ -147,7 +147,7 @@ class MCPServerTester {
     }, 'Test invalid resource (should error)');
     */
 
-    /*
+    
     // Test 7: List prompts
     this.sendMessage('prompts/list', {}, 'List available prompts');
 
@@ -161,7 +161,7 @@ class MCPServerTester {
 
     // Wait for all responses
     await new Promise(resolve => setTimeout(resolve, 3000));
-    */
+    
   }
 
   async stop() {

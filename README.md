@@ -145,6 +145,7 @@ Access voice style metadata via URI patterns:
 | **Generate Audio** | ![Generate Audio](screenshots/generate_audio.png) |
 | **List Voices** | ![List Voices](screenshots/list_voices.png) |
 | **Voice Styles** | ![Voice Styles](screenshots/list_voice_styles.png) |
+| **Combine Voice&Style** | ![Combine Voice&Style](screenshots/voice_and_style.png) |
 
 
 
