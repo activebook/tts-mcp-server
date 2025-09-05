@@ -10,7 +10,7 @@ import { getAndSetProxyEnvironment } from "./sys_proxy.js";
 const server = new McpServer(
   {
     name: "tts-mcp-server",
-    version: "1.1.0",
+    version: "1.1.1",
   },
   {
     capabilities: {
@@ -29,9 +29,24 @@ const settings = {
   voiceChoice: process.env.GOOGLE_VOICE || 'Kore',
 };
 
-
 // Resource templates
-server.resource("Voice style template", new ResourceTemplate('tts://voice-styles/{style_name}', { list: undefined }), async (uri, variables) => {
+// Voice style templates(one template: tts://voice-styles/{style_name})
+// List resources (all templates)
+server.resource("Voice style template", new ResourceTemplate('tts://voice-styles/{style_name}', {
+  list: async () => {
+    const templates = getVoiceStyleTemplates();
+    const availableStyles = Object.keys(templates);
+
+    return {
+      resources: availableStyles.map(styleName => ({
+        name: styleName,
+        uri: `tts://voice-styles/${styleName}`,
+        description: templates[styleName].description,
+        mimeType: 'application/json'
+      }))
+    };
+  }
+}), async (uri, variables) => {
   const styleName = variables.style_name[0];
   const templates = getVoiceStyleTemplates();
 
@@ -52,7 +67,6 @@ server.resource("Voice style template", new ResourceTemplate('tts://voice-styles
     ],
   };
 });
-
 
 
 // Tools

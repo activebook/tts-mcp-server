@@ -119,10 +119,17 @@ class MCPServerTester {
     /*
     // Test 2: List tools
     this.sendMessage('tools/list', {}, 'List available tools');
-
+    */
+   
     // Test 3: List resource templates
     this.sendMessage('resources/templates/list', {}, 'List resource templates');
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
+    // Test 3.1: List actual resources (this will use our list callback)
+    this.sendMessage('resources/list', {}, 'List actual resources');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    /*
     // Test 4: Call get_voice_styles tool
     this.sendMessage('tools/call', {
       name: 'get_voice_styles',
@@ -140,6 +147,7 @@ class MCPServerTester {
     }, 'Test invalid resource (should error)');
     */
 
+    /*
     // Test 7: List prompts
     this.sendMessage('prompts/list', {}, 'List available prompts');
 
@@ -153,6 +161,7 @@ class MCPServerTester {
 
     // Wait for all responses
     await new Promise(resolve => setTimeout(resolve, 3000));
+    */
   }
 
   async stop() {
